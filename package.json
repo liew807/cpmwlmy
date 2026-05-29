@@ -1,0 +1,14 @@
+{
+  "name": "ipa-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js",
+    "cert": "node generate-cert.js",
+    "build": "npm install && npm run cert"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "node-forge": "^1.3.1"
+  }
+}
