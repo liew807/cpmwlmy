@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>IPA 一键安装</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 22px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .upload-area {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area:hover, .upload-area:active {
+            background: rgba(255,255,255,0.1);
+            border-color: #667eea;
+        }
+        
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .file-info {
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            display: none;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .file-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+        
+        .file-size {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+            display: none;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        
+        .btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin: 10px 0;
+            display: none;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .step-num {
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: #fff;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="app-icon">📱</div>
+            <div class="title">IPA 安装器</div>
+            <div class="subtitle">上传IPA · 一键安装到桌面</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">📂 选择IPA文件</div>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📦</div>
+                <div class="upload-text">点击选择文件或拖拽到此处</div>
+            </div>
+            <input type="file" id="fileInput" accept=".ipa">
+            
+            <div class="file-info" id="fileInfo">
+                <div class="file-name" id="fileName"></div>
+                <div class="file-size" id="fileSize"></div>
+            </div>
+            
+            <div class="progress" id="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <button class="btn btn-primary" id="uploadBtn" disabled>
+                ⬆️ 上传文件
+            </button>
+            
+            <button class="btn btn-success" id="installBtn">
+                📲 一键安装到手机
+            </button>
+            
+            <button class="btn btn-outline" id="certBtn">
+                🔐 下载信任证书
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">📋 安装步骤</div>
+            <div class="steps">
+                <div class="step">
+                    <span class="step-num">1</span>
+                    <span>上传你的IPA文件</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <span>点击"下载信任证书"并安装</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <span>点击"一键安装到手机"</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">4</span>
+                    <span>弹窗中点击"安装"</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">5</span>
+                    <span>设置 > 通用 > 关于本机 > 证书信任设置</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">6</span>
+                    <span>开启证书信任，App即可使用</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const installBtn = document.getElementById('installBtn');
+        const certBtn = document.getElementById('certBtn');
+        const progress = document.getElementById('progress');
+        const progressBar = document.getElementById('progressBar');
+        const toast = document.getElementById('toast');
+        
+        let selectedFile = null;
+        let installUrl = '';
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.name.toLowerCase().endsWith('.ipa')) {
+                    showToast('❌ 请选择IPA文件');
+                    return;
+                }
+                selectedFile = file;
+                fileName.textContent = '📦 ' + file.name;
+                fileSize.textContent = formatSize(file.size);
+                fileInfo.style.display = 'block';
+                uploadBtn.disabled = false;
+                installBtn.style.display = 'none';
+            }
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'rgba(255,255,255,0.2)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255,255,255,0.2)';
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.toLowerCase().endsWith('.ipa')) {
+                selectedFile = file;
+                fileName.textContent = '📦 ' + file.name;
+                fileSize.textContent = formatSize(file.size);
+                fileInfo.style.display = 'block';
+                uploadBtn.disabled = false;
+                installBtn.style.display = 'none';
+            }
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '上传中...';
+            progress.style.display = 'block';
+            progressBar.style.width = '0%';
+            
+            const formData = new FormData();
+            formData.append('ipa', selectedFile);
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        progressBar.style.width = (e.loaded / e.total) * 100 + '%';
+                    }
+                });
+                
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        const res = JSON.parse(xhr.responseText);
+                        if (res.success) {
+                            installUrl = res.data.installUrl;
+                            uploadBtn.style.display = 'none';
+                            installBtn.style.display = 'block';
+                            showToast('✅ 上传成功！点击安装按钮');
+                        } else {
+                            showToast('❌ ' + res.message);
+                        }
+                    }
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = '⬆️ 上传文件';
+                    setTimeout(() => {
+                        progress.style.display = 'none';
+                        progressBar.style.width = '0%';
+                    }, 1000);
+                });
+                
+                xhr.open('POST', '/upload');
+                xhr.send(formData);
+            } catch (err) {
+                showToast('❌ 上传失败');
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '⬆️ 上传文件';
+                progress.style.display = 'none';
+            }
+        });
+
+        installBtn.addEventListener('click', () => {
+            if (installUrl && isIOS) {
+                showToast('📲 正在打开安装...');
+                setTimeout(() => {
+                    window.location.href = installUrl;
+                }, 500);
+            } else if (installUrl) {
+                showToast('📥 请使用iPhone打开此链接');
+            }
+        });
+
+        certBtn.addEventListener('click', () => {
+            window.open('/cert', '_blank');
+            showToast('🔐 下载证书后请安装并信任');
+        });
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function formatSize(bytes) {
+            return bytes > 1024 * 1024 
+                ? (bytes / 1024 / 1024).toFixed(2) + ' MB' 
+                : (bytes / 1024).toFixed(1) + ' KB';
+        }
+    </script>
+</body>
+</html>
